@@ -9,7 +9,7 @@ class CatApiAdapter {
                 path: `/v1${endpoint}`,
                 method: 'GET',
                 headers: {
-                    'x-api-key': config.apiKey,
+                    'x-api-key': config.apiKey || '', 
                 },
             };
 
@@ -22,14 +22,17 @@ class CatApiAdapter {
 
                 res.on('end', () => {
                     try {
+                        if (res.statusCode !== 200) {
+                            return reject(new Error(`Error API: ${res.statusCode} ${res.statusMessage}`));
+                        }
                         resolve(JSON.parse(data));
                     } catch (error) {
-                        reject(error);
+                        reject(new Error(`Error al parsear JSON: ${error.message}`));
                     }
                 });
             });
 
-            req.on('error', (error) => reject(error));
+            req.on('error', (error) => reject(new Error(`Error en la solicitud HTTP: ${error.message}`)));
             req.end();
         });
     }

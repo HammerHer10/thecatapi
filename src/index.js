@@ -1,6 +1,8 @@
 const app = require('./app');
 
-const config = require('./config/config');
+const { connectDB, config } = require('./config/config');
+
+connectDB();
 
 app.listen(config.port, () => {
     console.log(`Servidor corriendo en http://localhost:${config.port}`);
